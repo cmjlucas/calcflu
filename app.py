@@ -779,6 +779,29 @@ def generer_pdf_bietage(res, fluide_cp, schema_img_pil, fig_ph):
     return buf
 
 
+def _charger_police(taille):
+    """Charge une police bold disponible sur Windows et Linux (Streamlit Cloud)."""
+    from PIL import ImageFont
+    candidates = [
+        "arialbd.ttf",                                                    # Windows
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",          # Ubuntu/Debian
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",  # CentOS/RHEL
+        "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf",                   # autre Linux
+        "DejaVuSans-Bold.ttf",
+        "LiberationSans-Bold.ttf",
+    ]
+    for path in candidates:
+        try:
+            return ImageFont.truetype(path, taille)
+        except Exception:
+            continue
+    # Dernier recours : load_default avec taille (Pillow >= 10)
+    try:
+        return ImageFont.load_default(size=taille)
+    except Exception:
+        return ImageFont.load_default()
+
+
 def superposer_schema_mono(img_path, perf, fluide_lbl=''):
     """Surimpression des résultats sur circuitFrigo.png (770×477 px)."""
     from PIL import ImageDraw, ImageFont
@@ -791,14 +814,7 @@ def superposer_schema_mono(img_path, perf, fluide_lbl=''):
     img = bg
     draw = ImageDraw.Draw(img)
 
-    font_size = 45  # image 770px affichée à 80% → police lisible ~36px écran
-    try:
-        font_bold = ImageFont.truetype("arialbd.ttf", font_size)
-    except Exception:
-        try:
-            font_bold = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
-        except Exception:
-            font_bold = ImageFont.load_default()
+    font_bold = _charger_police(45)
 
     vb   = perf.get('volume_balaye', 0) * 3600  # m³/s → m³/h
     qm   = perf.get('debit_massique', 0) * 3600  # kg/s → kg/h
@@ -834,14 +850,7 @@ def superposer_volumes_schema(img_path, perf):
     w, h = img.size
     draw = ImageDraw.Draw(img)
 
-    font_size = max(55, int(w * 0.050))  # image 2219px affichée ~600px → police lisible
-    try:
-        font_bold = ImageFont.truetype("arialbd.ttf", font_size)
-    except Exception:
-        try:
-            font_bold = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
-        except Exception:
-            font_bold = ImageFont.load_default()
+    font_bold = _charger_police(max(55, int(w * 0.050)))
 
     # (coin_sup_gauche_x, coin_sup_gauche_y, texte, couleur)
     # Coordonnées = pixel / taille image (2219 x 2838)
@@ -876,14 +885,7 @@ def superposer_schema_inj_partielle(img_path, perf):
     w, h = img.size   # 2221 × 1292
     draw = ImageDraw.Draw(img)
 
-    font_size = max(55, int(w * 0.050))  # image 2221px affichée ~600px
-    try:
-        font_bold = ImageFont.truetype("arialbd.ttf", font_size)
-    except Exception:
-        try:
-            font_bold = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
-        except Exception:
-            font_bold = ImageFont.load_default()
+    font_bold = _charger_police(max(55, int(w * 0.050)))
 
     # Coordonnées coin supérieur gauche — image 2221×1292 px
     _qm_inj = (perf['m_hp'] - perf['m_bp']) * 3600  # ṁ_inj = ṁ_HP − ṁ_BP
@@ -916,14 +918,7 @@ def superposer_schema_bouteille_bp(img_path, perf):
     w, h = img.size   # 4134 × 2243
     draw = ImageDraw.Draw(img)
 
-    font_size = max(80, int(w * 0.030))  # image 4134px affichée ~600px
-    try:
-        font_bold = ImageFont.truetype("arialbd.ttf", font_size)
-    except Exception:
-        try:
-            font_bold = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
-        except Exception:
-            font_bold = ImageFont.load_default()
+    font_bold = _charger_police(max(80, int(w * 0.030)))
 
     # Coordonnées dans l'espace 4134×2443 → y corrigé ×(2243/2443)
     _sy = 2243 / 2443.0
