@@ -814,7 +814,7 @@ def superposer_schema_mono(img_path, perf, fluide_lbl=''):
     img = bg
     draw = ImageDraw.Draw(img)
 
-    font_bold = _charger_police(45)
+    font_bold = _charger_police(22)
 
     vb   = perf.get('volume_balaye', 0) * 3600  # m³/s → m³/h
     qm   = perf.get('debit_massique', 0) * 3600  # kg/s → kg/h
@@ -850,7 +850,7 @@ def superposer_volumes_schema(img_path, perf):
     w, h = img.size
     draw = ImageDraw.Draw(img)
 
-    font_bold = _charger_police(max(55, int(w * 0.050)))
+    font_bold = _charger_police(max(28, int(w * 0.025)))
 
     # (coin_sup_gauche_x, coin_sup_gauche_y, texte, couleur)
     # Coordonnées = pixel / taille image (2219 x 2838)
@@ -885,7 +885,7 @@ def superposer_schema_inj_partielle(img_path, perf):
     w, h = img.size   # 2221 × 1292
     draw = ImageDraw.Draw(img)
 
-    font_bold = _charger_police(max(55, int(w * 0.050)))
+    font_bold = _charger_police(max(28, int(w * 0.025)))
 
     # Coordonnées coin supérieur gauche — image 2221×1292 px
     _qm_inj = (perf['m_hp'] - perf['m_bp']) * 3600  # ṁ_inj = ṁ_HP − ṁ_BP
@@ -918,7 +918,7 @@ def superposer_schema_bouteille_bp(img_path, perf):
     w, h = img.size   # 4134 × 2243
     draw = ImageDraw.Draw(img)
 
-    font_bold = _charger_police(max(80, int(w * 0.030)))
+    font_bold = _charger_police(max(40, int(w * 0.015)))
 
     # Coordonnées dans l'espace 4134×2443 → y corrigé ×(2243/2443)
     _sy = 2243 / 2443.0
