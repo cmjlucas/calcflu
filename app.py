@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 
 # ── AdSense ──────────────────────────────────────────────────────────────────
 # Remplacez VOTRE_PUB_ID et VOTRE_SLOT_ID par vos identifiants AdSense réels
-ADSENSE_PUB_ID  = "ca-pub-XXXXXXXXXXXXXXXX"   # ex: ca-pub-1234567890123456
-ADSENSE_SLOT_ID = "YYYYYYYYYY"                 # ex: 1234567890
+ADSENSE_PUB_ID  = "ca-pub-3837526753617519"
+ADSENSE_SLOT_ID = "8113621558"
 
 def afficher_pub_adsense(format_pub="horizontal"):
     """Affiche une unité publicitaire AdSense via st.components.v1.html()."""
