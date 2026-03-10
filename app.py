@@ -823,7 +823,7 @@ def superposer_schema_mono(img_path, perf, fluide_lbl=''):
 
     # (x, y, texte, couleur) — coin supérieur gauche, image 770×477 px
     zones = [
-        (344, 129, f"{vb:.2f} m³/h",    '#7b1fa2'),  # Vb
+        (344, 129, f"{vb:.2f} m3/h",    '#7b1fa2'),  # Vb
         (266, 382, f"{qm:.1f} kg/h",     '#1565c0'),  # qm
         (654, 223, f"{phik:.1f} kW",     '#e65100'),  # Phi k
         ( 82, 244, f"{phi0:.1f} kW",     '#1976d2'),  # Phi 0
@@ -855,8 +855,8 @@ def superposer_volumes_schema(img_path, perf):
     # (coin_sup_gauche_x, coin_sup_gauche_y, texte, couleur)
     # Coordonnées = pixel / taille image (2219 x 2838)
     zones = [
-        (495.4/2219,  279.1/2838, f"{perf['v_bal_bp']:.2f} m³/h",          '#7b1fa2'),  # Vb BP
-        (1327 /2219,  279.1/2838, f"{perf['v_bal_hp']:.2f} m³/h",          '#c62828'),  # Vb HP
+        (495.4/2219,  279.1/2838, f"{perf['v_bal_bp']:.2f} m3/h",           '#7b1fa2'),  # Vb BP
+        (1327 /2219,  279.1/2838, f"{perf['v_bal_hp']:.2f} m3/h",           '#c62828'),  # Vb HP
         (417.1/2219,  494.6/2838, f"{perf.get('q_evap_mp', 0):.1f} kW",    '#1565c0'),  # φ MP
         (1806 /2219,  676  /2838, f"{perf['q_cond']:.1f} kW",              '#e65100'),  # Phi k
         (1264 /2219,  1071 /2838, f"{perf['m_hp']*3600:.1f} kg/h",         '#c62828'),  # qm HP
@@ -890,8 +890,8 @@ def superposer_schema_inj_partielle(img_path, perf):
     # Coordonnées coin supérieur gauche — image 2221×1292 px
     _qm_inj = (perf['m_hp'] - perf['m_bp']) * 3600  # ṁ_inj = ṁ_HP − ṁ_BP
     zones = [
-        ( 230, 260, f"{perf['v_bal_bp']:.2f} m³/h",                        '#7b1fa2'),  # Vb BP
-        (1410, 260, f"{perf['v_bal_hp']:.2f} m³/h",                        '#c62828'),  # Vb HP
+        ( 230, 260, f"{perf['v_bal_bp']:.2f} m3/h",                         '#7b1fa2'),  # Vb BP
+        (1410, 260, f"{perf['v_bal_hp']:.2f} m3/h",                         '#c62828'),  # Vb HP
         (1838, 762, f"{perf['q_cond']:.1f} kW",                            '#e65100'),  # Phi k
         (1467,1234, f"{perf['m_hp']*3600:.1f} kg/h",                       '#c62828'),  # qm HP
         (1170, 472, f"{perf['m_bp']*3600:.1f} kg/h",                       '#7b1fa2'),  # qm BP
@@ -924,8 +924,8 @@ def superposer_schema_bouteille_bp(img_path, perf):
     _sy = 2243 / 2443.0
     _m_mp = perf.get('m_mp', 0.0)
     zones = [
-        (2400, int( 279 * _sy), f"{perf['v_bal_bp']:.2f} m³/h",                        '#7b1fa2'),  # Vb BP
-        (3267, int( 279 * _sy), f"{perf['v_bal_hp']:.2f} m³/h",                        '#c62828'),  # Vb HP
+        (2400, int( 279 * _sy), f"{perf['v_bal_bp']:.2f} m3/h",                         '#7b1fa2'),  # Vb BP
+        (3267, int( 279 * _sy), f"{perf['v_bal_hp']:.2f} m3/h",                         '#c62828'),  # Vb HP
         (3762, int( 660 * _sy) + 40, f"{perf['q_cond']:.1f} kW",                            '#e65100'),  # Phi k
         (3387, int(1336 * _sy) +100, f"{perf['m_hp']*3600:.1f} kg/h",                       '#c62828'),  # qm HP
         (2114, int(1603 * _sy) +160, f"{perf['m_bp']*3600:.1f} kg/h",                       '#7b1fa2'),  # qm BP
