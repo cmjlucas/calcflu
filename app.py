@@ -644,6 +644,114 @@ def _compression_isentropique(fluide, s_aspiration, p_refoulement, t_ref_k, labe
     return h_is
 
 
+def generer_pdf_mono(resultats, fluide_lbl, schema_img_pil):
+    """Génère un PDF multi-pages couleur pour le cycle mono-étagé."""
+    import io
+    from matplotlib.backends.backend_pdf import PdfPages
+
+    perf   = resultats['performance']
+    points = resultats['points']
+    buf    = io.BytesIO()
+
+    with PdfPages(buf) as pdf:
+
+        # ── PAGE 1 : Schéma avec labels ──────────────────────────────────────
+        fig1, ax1 = plt.subplots(figsize=(11.69, 8.27))
+        fig1.patch.set_facecolor('white')
+        ax1.axis('off')
+        ax1.set_title(f'Schéma cycle mono-étagé  |  Fluide : {fluide_lbl}',
+                      fontsize=14, fontweight='bold', color='#0f4c75', pad=10)
+        if schema_img_pil:
+            ax1.imshow(schema_img_pil)
+        fig1.tight_layout(pad=0.5)
+        pdf.savefig(fig1, dpi=150)
+        plt.close(fig1)
+
+        # ── PAGE 2 : Résultats de performance ────────────────────────────────
+        fig2, ax2 = plt.subplots(figsize=(11.69, 8.27))
+        fig2.patch.set_facecolor('white')
+        ax2.axis('off')
+        ax2.set_title(f'Résultats cycle mono-étagé  |  Fluide : {fluide_lbl}',
+                      fontsize=14, fontweight='bold', color='#0f4c75', pad=10)
+        vb = perf.get('volume_balaye', 0) * 3600
+        qm = perf.get('debit_massique', 0) * 3600
+        perf_rows = [
+            ['Puissance frigorifique',  f"{perf.get('puissance_frigorifique', 0):.2f} kW"],
+            ['Puissance de condensation', f"{perf.get('puissance_condensation', 0):.2f} kW"],
+            ['Puissance de compression', f"{perf.get('puissance_compression', 0):.2f} kW"],
+            ['COP',                     f"{perf.get('cop', 0):.3f}"],
+            ['Débit massique',          f"{qm:.2f} kg/h"],
+            ['Volume balayé',           f"{vb:.3f} m3/h"],
+        ]
+        tbl = ax2.table(
+            cellText=perf_rows,
+            colLabels=['Grandeur', 'Valeur'],
+            cellLoc='left', loc='center',
+            bbox=[0.1, 0.3, 0.8, 0.55]
+        )
+        tbl.auto_set_font_size(False)
+        tbl.set_fontsize(12)
+        for (row, col), cell in tbl.get_celld().items():
+            if row == 0:
+                cell.set_facecolor('#0f4c75')
+                cell.set_text_props(color='white', fontweight='bold')
+            elif row % 2 == 0:
+                cell.set_facecolor('#f0f4f8')
+            cell.set_edgecolor('#ccc')
+        fig2.tight_layout(pad=0.5)
+        pdf.savefig(fig2, dpi=150)
+        plt.close(fig2)
+
+        # ── PAGE 3 : Tableau des points du cycle ─────────────────────────────
+        fig3, ax3 = plt.subplots(figsize=(11.69, 8.27))
+        fig3.patch.set_facecolor('white')
+        ax3.axis('off')
+        ax3.set_title('Tableau des points du cycle', fontsize=14,
+                      fontweight='bold', color='#0f4c75', pad=10)
+        pt_labels = {'0': 'Évaporation (sat.)', '1': 'Aspiration compresseur',
+                     '2is': 'Compression isentr.', '2': 'Refoulement compresseur',
+                     '3': 'Condensation (sat.)', "3'": 'Sortie condenseur',
+                     '4': 'Sortie détendeur', '5': 'Sortie évaporateur'}
+        rows_pts = []
+        for k, lbl in pt_labels.items():
+            pt = points.get(k)
+            if not pt:
+                continue
+            x_val = f"X={pt['X']:.1f}%" if pt.get('X') is not None else (
+                     f"{pt['V']:.5f}" if pt.get('V') is not None else '—')
+            rows_pts.append([f"{k} — {lbl}",
+                f"{pt['T']:.2f}" if pt.get('T') is not None else '—',
+                f"{pt['P']:.3f}" if pt.get('P') is not None else '—',
+                f"{pt['H']:.2f}" if pt.get('H') is not None else '—',
+                f"{pt['S']:.4f}" if pt.get('S') is not None else '—',
+                x_val])
+        tbl2 = ax3.table(
+            cellText=rows_pts,
+            colLabels=['Point', 'T [°C]', 'P [bar]', 'h [kJ/kg]', 's [kJ/kgK]', 'v / X'],
+            cellLoc='left', loc='center',
+            bbox=[0.0, 0.1, 1.0, 0.80]
+        )
+        tbl2.auto_set_font_size(False)
+        tbl2.set_fontsize(10)
+        for (row, col), cell in tbl2.get_celld().items():
+            if row == 0:
+                cell.set_facecolor('#263238')
+                cell.set_text_props(color='white', fontweight='bold')
+            elif row % 2 == 0:
+                cell.set_facecolor('#f5f5f5')
+            cell.set_edgecolor('#bbb')
+        fig3.tight_layout(pad=0.3)
+        pdf.savefig(fig3, dpi=150)
+        plt.close(fig3)
+
+        d = pdf.infodict()
+        d['Title'] = f'Cycle mono-étagé — {fluide_lbl}'
+        d['Author'] = 'CalcFlu'
+
+    buf.seek(0)
+    return buf
+
+
 def generer_pdf_bietage(res, fluide_cp, schema_img_pil, fig_ph):
     """Génère un PDF multi-pages couleur pour le cycle bi-étagé."""
     import io
@@ -2307,9 +2415,27 @@ if onglet_selectionne == "Cycle mono-étagé":
                 })
             
             st.dataframe(tableau_data, use_container_width=True, hide_index=True)
+
+            # Bouton export PDF
+            st.markdown("---")
+            if st.button("📄 Exporter en PDF", key='btn_mono_pdf'):
+                try:
+                    _fluide_mono = st.session_state.get('fluide', '')
+                    _img_path = resource_path("circuitFrigo.png")
+                    _schema_pil = superposer_schema_mono(_img_path, resultats['performance'], _fluide_mono) if os.path.exists(_img_path) else None
+                    _pdf_buf = generer_pdf_mono(resultats, _fluide_mono, _schema_pil)
+                    st.download_button(
+                        label="⬇️ Télécharger le PDF",
+                        data=_pdf_buf,
+                        file_name=f"calcflu_mono_{_fluide_mono}.pdf",
+                        mime="application/pdf",
+                        key='dl_mono_pdf'
+                    )
+                except Exception as _e:
+                    st.error(f"Erreur génération PDF : {_e}")
         else:
             st.info("Cliquez sur 'Calculer' pour afficher les résultats")
-        
+
         st.markdown('</div>', unsafe_allow_html=True)
 
 elif onglet_selectionne == "Choix de compresseur":
