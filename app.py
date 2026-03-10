@@ -791,7 +791,7 @@ def superposer_schema_mono(img_path, perf, fluide_lbl=''):
     img = bg
     draw = ImageDraw.Draw(img)
 
-    font_size = 15
+    font_size = 45  # image 770px affichée à 80% → police lisible ~36px écran
     try:
         font_bold = ImageFont.truetype("arialbd.ttf", font_size)
     except Exception:
@@ -834,7 +834,7 @@ def superposer_volumes_schema(img_path, perf):
     w, h = img.size
     draw = ImageDraw.Draw(img)
 
-    font_size = max(18, int(w * 0.020))
+    font_size = max(55, int(w * 0.050))  # image 2219px affichée ~600px → police lisible
     try:
         font_bold = ImageFont.truetype("arialbd.ttf", font_size)
     except Exception:
@@ -876,7 +876,7 @@ def superposer_schema_inj_partielle(img_path, perf):
     w, h = img.size   # 2221 × 1292
     draw = ImageDraw.Draw(img)
 
-    font_size = max(18, int(w * 0.018))
+    font_size = max(55, int(w * 0.050))  # image 2221px affichée ~600px
     try:
         font_bold = ImageFont.truetype("arialbd.ttf", font_size)
     except Exception:
@@ -916,7 +916,7 @@ def superposer_schema_bouteille_bp(img_path, perf):
     w, h = img.size   # 4134 × 2243
     draw = ImageDraw.Draw(img)
 
-    font_size = max(22, int(w * 0.012))
+    font_size = max(80, int(w * 0.030))  # image 4134px affichée ~600px
     try:
         font_bold = ImageFont.truetype("arialbd.ttf", font_size)
     except Exception:
