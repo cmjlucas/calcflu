@@ -1828,6 +1828,257 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# ── PAGE D'ACCUEIL ────────────────────────────────────────────────────────────
+if 'page' not in st.session_state:
+    st.session_state.page = 'accueil'
+
+if st.session_state.page == 'accueil':
+    st.markdown("""
+        <style>
+        .accueil-hero {
+            background: linear-gradient(135deg, #0f4c75 0%, #1b6ca8 60%, #2563eb 100%);
+            padding: 40px 30px; border-radius: 16px; margin-bottom: 30px; text-align: center;
+        }
+        .accueil-card {
+            background: white; border-radius: 12px; padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 20px;
+            border-left: 5px solid #2563eb;
+        }
+        .accueil-formula {
+            background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px;
+            padding: 12px 18px; font-family: monospace; font-size: 15px;
+            margin: 8px 0; color: #0c4a6e;
+        }
+        .accueil-badge {
+            display: inline-block; padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: bold; margin: 4px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # ── HERO ──────────────────────────────────────────────────────────────────
+    st.markdown("""
+        <div class="accueil-hero">
+            <h1 style="color:white; font-size:2.4em; margin:0 0 10px 0;">❄️ CalcFlu</h1>
+            <p style="color:#bfdbfe; font-size:1.2em; margin:0 0 16px 0;">
+                Calculateur de cycles frigorifiques pour ingénieurs HVAC
+            </p>
+            <p style="color:#93c5fd; font-size:0.95em;">
+                Basé sur <strong style="color:white;">CoolProp</strong> — base de données thermodynamiques de référence (NIST/REFPROP)
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # ── PRÉSENTATION ──────────────────────────────────────────────────────────
+    col_p1, col_p2 = st.columns(2)
+    with col_p1:
+        st.markdown("""
+            <div class="accueil-card" style="border-color:#2563eb;">
+                <h3 style="color:#1e40af; margin-top:0;">🎯 À qui s'adresse CalcFlu ?</h3>
+                <p>CalcFlu est conçu pour les <strong>ingénieurs et techniciens du génie climatique et frigorifique</strong> qui ont besoin de :</p>
+                <ul>
+                    <li>Dimensionner des installations frigorifiques</li>
+                    <li>Calculer des cycles thermodynamiques rigoureux</li>
+                    <li>Comparer différentes architectures de cycles</li>
+                    <li>Sélectionner un compresseur à partir des volumes balayés</li>
+                    <li>Évaluer l'impact du choix du fluide frigorigène</li>
+                </ul>
+                <p>L'outil est adapté aux <strong>bureaux d'études</strong>, enseignants, étudiants en BTS/IUT/écoles d'ingénieurs, et techniciens terrain.</p>
+            </div>
+        """, unsafe_allow_html=True)
+    with col_p2:
+        st.markdown("""
+            <div class="accueil-card" style="border-color:#7c3aed;">
+                <h3 style="color:#5b21b6; margin-top:0;">⚙️ Possibilités de calcul</h3>
+                <ul>
+                    <li>✅ <strong>24 fluides frigorigènes</strong> : R134a, R410A, R32, R290, R744 (CO₂), R1234yf, R404A…</li>
+                    <li>✅ Cycles <strong>mono-étagés</strong> avec surchauffe et sous-refroidissement</li>
+                    <li>✅ Cycles <strong>bi-étagés — injection totale</strong> avec bouteille intermédiaire</li>
+                    <li>✅ Cycles <strong>bi-étagés — injection partielle</strong> avec échangeur à plaques</li>
+                    <li>✅ Calcul des <strong>volumes balayés</strong> BP et HP</li>
+                    <li>✅ Calcul des <strong>débits massiques</strong> et puissances</li>
+                    <li>✅ Dimensionnement de la <strong>pompe de recirculation</strong></li>
+                    <li>✅ Tracé du <strong>diagramme P-h</strong></li>
+                    <li>✅ Export <strong>PDF</strong> du bilan complet</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ── CYCLE MONO-ÉTAGÉ ──────────────────────────────────────────────────────
+    st.markdown("## 🔵 Cycle mono-étagé")
+    col_m1, col_m2 = st.columns([1, 1])
+    with col_m1:
+        st.markdown("""
+            <div class="accueil-card" style="border-color:#1976d2;">
+                <h4 style="color:#1565c0; margin-top:0;">Principe</h4>
+                <p>Le cycle de réfrigération à compression de vapeur comprend 4 transformations :</p>
+                <ol>
+                    <li><strong>1→2</strong> Compression (compresseur) — adiabatique</li>
+                    <li><strong>2→3</strong> Condensation (condenseur) — rejet de chaleur</li>
+                    <li><strong>3→4</strong> Détente (détendeur) — isenthalpique</li>
+                    <li><strong>4→1</strong> Évaporation (évaporateur) — absorption de chaleur</li>
+                </ol>
+                <h4 style="color:#1565c0;">Paramètres d'entrée</h4>
+                <ul>
+                    <li>Température / pression d'évaporation t₀ ou p₀</li>
+                    <li>Température / pression de condensation tₖ ou pₖ</li>
+                    <li>Surchauffe à l'aspiration [K]</li>
+                    <li>Sous-refroidissement au condenseur [K]</li>
+                    <li>Rendements volumétrique et isentropique [-]</li>
+                    <li>Puissance frigorifique [kW] ou volume balayé [m³/h]</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+    with col_m2:
+        st.markdown("""
+            <div class="accueil-card" style="border-color:#1976d2;">
+                <h4 style="color:#1565c0; margin-top:0;">Formules clés</h4>
+                <div class="accueil-formula">h₁ = h(T₀ + ΔT_surch, p₀)  — aspiration</div>
+                <div class="accueil-formula">h₂ = h₁ + (h₂ₛ − h₁) / ηᵢₛ  — refoulement réel</div>
+                <div class="accueil-formula">q₀ = h₁ − h₄  — effet frigorifique [kJ/kg]</div>
+                <div class="accueil-formula">w = h₂ − h₁  — travail compresseur [kJ/kg]</div>
+                <div class="accueil-formula">COP = q₀ / w = Q₀ / W_comp</div>
+                <div class="accueil-formula">ṁ = Q₀ / q₀  [kg/s]</div>
+                <div class="accueil-formula">Vb = ṁ × v₁ / ηvol  [m³/s]</div>
+                <div class="accueil-formula">ηvol = 1 − c × (τ − 1)  avec τ = pₖ/p₀</div>
+                <p style="font-size:11px; color:#666; margin-top:10px;">
+                    v₁ = volume massique à l'aspiration [m³/kg] | c = taux de volumes morts (≈ 0.04)
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ── CYCLE BI-ÉTAGÉ ────────────────────────────────────────────────────────
+    st.markdown("## 🟣 Cycle bi-étagé")
+    st.markdown("""
+        <div class="accueil-card" style="border-color:#7b1fa2;">
+            <h4 style="color:#6a1b9a; margin-top:0;">Pourquoi un cycle bi-étagé ?</h4>
+            <p>Lorsque le taux de compression <strong>τ = pₖ/p₀ dépasse 6 à 8</strong>, le cycle mono-étagé devient inefficace
+            (forte surchauffe au refoulement, faible rendement volumétrique). Le cycle bi-étagé introduit une
+            <strong>pression intermédiaire pi</strong> pour diviser la compression en deux étages, améliorant le COP et la fiabilité.</p>
+            <p>La pression intermédiaire optimale minimisant le travail total est :</p>
+        </div>
+    """, unsafe_allow_html=True)
+    st.markdown('<div class="accueil-formula" style="text-align:center; font-size:18px;">pi = √(p₀ × pₖ)  → taux de compression égaux : τ_BP = τ_HP = √τ_total</div>', unsafe_allow_html=True)
+
+    col_b1, col_b2 = st.columns(2)
+    with col_b1:
+        st.markdown("""
+            <div class="accueil-card" style="border-color:#0f4c75;">
+                <h4 style="color:#0f4c75; margin-top:0;">🔀 Injection totale</h4>
+                <p>Tout le liquide du condenseur passe par la <strong>bouteille intermédiaire à pi</strong>.
+                La vapeur saturée alimente le compresseur HP, le liquide saturé est détendu vers l'évaporateur BP.</p>
+                <div class="accueil-formula">r = (h₂ − h₇) / (h₃ − h₅)</div>
+                <div class="accueil-formula">ṁ_HP = r × ṁ_BP</div>
+                <p style="font-size:12px; color:#555;">Variante disponible : injection totale avec <strong>bouteille BP</strong>
+                (évaporateur noyé avec pompe de recirculation côté basse pression)</p>
+            </div>
+        """, unsafe_allow_html=True)
+    with col_b2:
+        st.markdown("""
+            <div class="accueil-card" style="border-color:#00695c;">
+                <h4 style="color:#00695c; margin-top:0;">💉 Injection partielle</h4>
+                <p>Une fraction du liquide est dérivée, détendue à pi, et <strong>injectée via un échangeur à plaques</strong>
+                pour sous-refroidir le liquide principal et désurchauffer le refoulement BP.</p>
+                <div class="accueil-formula">T₇ = ti + Δt_pincement</div>
+                <div class="accueil-formula">r = 1 + (h₅ − h₇) / (h″_pi − h₅)</div>
+                <div class="accueil-formula">h₃ = (ṁ_BP×h₂ + ṁ_inj×h₁₀) / ṁ_HP</div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ── GUIDE D'UTILISATION ───────────────────────────────────────────────────
+    st.markdown("## 📋 Guide d'utilisation pas à pas")
+    col_g1, col_g2, col_g3 = st.columns(3)
+    with col_g1:
+        st.markdown("""
+            <div class="accueil-card" style="border-color:#f59e0b;">
+                <h4 style="color:#d97706; margin-top:0;">① Saisir les conditions</h4>
+                <ul>
+                    <li>Choisir le <strong>fluide frigorigène</strong></li>
+                    <li>Entrer la <strong>température ou pression</strong> d'évaporation — l'autre est calculée automatiquement</li>
+                    <li>Entrer la <strong>température ou pression</strong> de condensation</li>
+                    <li>Renseigner surchauffe et sous-refroidissement</li>
+                    <li>Vérifier les rendements (calculés automatiquement à partir de τ)</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+    with col_g2:
+        st.markdown("""
+            <div class="accueil-card" style="border-color:#10b981;">
+                <h4 style="color:#059669; margin-top:0;">② Choisir la donnée de dimensionnement</h4>
+                <ul>
+                    <li><strong>Puissance frigorifique Q₀ [kW]</strong> → CalcFlu calcule les débits et volumes balayés</li>
+                    <li><strong>Volume balayé [m³/h]</strong> → CalcFlu calcule la puissance et les débits</li>
+                </ul>
+                <p>Pour le bi-étagé, vous pouvez aussi saisir la <strong>puissance de l'étage MP</strong> (évaporateur intermédiaire).</p>
+            </div>
+        """, unsafe_allow_html=True)
+    with col_g3:
+        st.markdown("""
+            <div class="accueil-card" style="border-color:#ef4444;">
+                <h4 style="color:#dc2626; margin-top:0;">③ Lire les résultats</h4>
+                <ul>
+                    <li><strong>Tuiles colorées</strong> : Q₀, Qₖ, W_comp, COP</li>
+                    <li><strong>Volumes balayés</strong> BP et HP en m³/h</li>
+                    <li><strong>Débits massiques</strong> ṁ BP et ṁ HP en kg/h</li>
+                    <li><strong>Tableau des points</strong> du cycle (T, P, h, s)</li>
+                    <li><strong>Diagramme P-h</strong> interactif</li>
+                    <li><strong>Export PDF</strong> du bilan complet</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ── UNITÉS ────────────────────────────────────────────────────────────────
+    st.markdown("## 📐 Unités et conventions")
+    col_u1, col_u2 = st.columns(2)
+    with col_u1:
+        st.markdown("""
+            | Grandeur | Unité affichée | Unité interne |
+            |----------|---------------|---------------|
+            | Pression | bar abs | Pa |
+            | Température | °C | K |
+            | Enthalpie | kJ/kg | J/kg |
+            | Entropie | kJ/(kg·K) | J/(kg·K) |
+            | Débit massique | kg/h | kg/s |
+        """)
+    with col_u2:
+        st.markdown("""
+            | Grandeur | Unité affichée | Unité interne |
+            |----------|---------------|---------------|
+            | Volume spécifique | m³/kg | m³/kg |
+            | Volume balayé | m³/h | m³/s |
+            | Puissance | kW | W |
+            | COP | — | — |
+            | Taux de compression | — | — |
+        """)
+
+    st.markdown("---")
+
+    # ── BOUTON DÉMARRER ───────────────────────────────────────────────────────
+    st.markdown("<br>", unsafe_allow_html=True)
+    col_btn = st.columns([1, 2, 1])
+    with col_btn[1]:
+        if st.button("🚀 Accéder à l'application", type="primary",
+                     use_container_width=True, key='btn_demarrer'):
+            st.session_state.page = 'app'
+            st.rerun()
+
+    st.markdown("""
+        <div style="text-align:center; color:#94a3b8; font-size:12px; margin-top:30px;">
+            CalcFlu — Développé par Christian Lucas | Motorisé par CoolProp & Streamlit<br>
+            Les calculs sont basés sur les propriétés thermodynamiques réelles des fluides (équations d'état NIST).
+        </div>
+    """, unsafe_allow_html=True)
+
+    st.stop()
+
 # Sélection d'onglet avec état persistant
 if 'onglet_actif' not in st.session_state:
     st.session_state.onglet_actif = "Cycle mono-étagé"
