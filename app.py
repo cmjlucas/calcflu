@@ -2035,6 +2035,9 @@ if st.session_state.page == 'accueil':
 
     st.markdown("---")
 
+    # ── PUBLICITÉ ─────────────────────────────────────────────────────────────
+    afficher_pub_adsense("horizontal")
+
     # ── UNITÉS ────────────────────────────────────────────────────────────────
     st.markdown("## 📐 Unités et conventions")
     col_u1, col_u2 = st.columns(2)
